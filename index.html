@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zain Clinic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- GLOBAL RESET & THEME --- */
+        :root { --bg: #05262B; --card: #0D383E; --accent: #CDEA42; --text: #fff; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            margin: 0; padding: 0; background: #111; font-family: 'Work Sans', sans-serif; 
+            height: 100vh; width: 100vw; overflow: hidden; display: flex; justify-content: center; 
+        }
+
+        /* MOBILE FRAME FIX */
+        .app { 
+            width: 100%; height: 100%; max-width: 500px; /* Limits width on PC, Full on Mobile */
+            background: var(--bg); display: flex; flex-direction: column; position: relative; 
+        }
+
+        /* HEADER */
+        .header { 
+            height: 60px; padding: 0 15px; display: flex; justify-content: space-between; align-items: center; 
+            background: rgba(5,38,43,0.98); border-bottom: 1px solid rgba(255,255,255,0.1); flex-shrink: 0;
+        }
+        .logo { font-size: 20px; color: var(--text); font-weight: 700; letter-spacing: 1px; }
+        .wa-btn { 
+            background: #25D366; color: white; padding: 6px 12px; border-radius: 20px; 
+            text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 6px; 
+        }
+
+        /* CONTENT AREA */
+        .main { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 80px; scroll-behavior: smooth; }
+        .screen { display: none; animation: fadeIn 0.3s; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from{opacity:0; transform:translateY(5px);} to{opacity:1; transform:translateY(0);} }
+
+        /* COMPONENTS */
+        .card { background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); color: white; }
+        .btn-main { background: var(--accent); color: black; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; }
+
+        /* STORE */
+        .prod-card { background: var(--card); border-radius: 10px; overflow: hidden; margin-bottom: 15px; border: 1px solid #333; display: flex; flex-direction: column; }
+        .prod-img { width: 100%; height: 180px; object-fit: cover; background: #222; }
+        .prod-info { padding: 12px; }
+        .price-row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+        .buy-sm { background: var(--accent); border: none; padding: 8px 16px; border-radius: 20px; font-weight: bold; }
+
+        /* CHAT */
+        .chat-header-card { background: var(--card); padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; color: white; }
+        #chat-list { height: calc(100vh - 240px); overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 10px 14px; border-radius: 12px; max-width: 80%; font-size: 14px; word-wrap: break-word; }
+        .msg-me { align-self: flex-end; background: var(--accent); color: black; }
+        .msg-doc { align-self: flex-start; background: #1a3c42; color: white; }
+        .chat-input { display: flex; gap: 10px; margin-top: 10px; }
+
+        /* NAV BAR */
+        .nav { 
+            position: absolute; bottom: 0; width: 100%; height: 65px; background: #021a1e; 
+            display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; z-index: 10;
+        }
+        .icon { color: #607D8B; font-size: 22px; display: flex; flex-direction: column; align-items: center; }
+        .icon.active { color: var(--accent); }
+        .fab-center { 
+            width: 55px; height: 55px; background: var(--accent); border-radius: 50%; 
+            display: flex; justify-content: center; align-items: center; font-size: 24px; color: black; 
+            transform: translateY(-25px); border: 5px solid #021a1e; box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+        }
+
+        /* LOGIN MODAL */
+        #login-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 999; display: flex; flex-direction: column; justify-content: center; padding: 30px; }
+        .inp-field { padding: 15px; border-radius: 8px; border: none; margin: 15px 0; width: 100%; }
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <!-- HEADER -->
+    <div class="header">
+        <div class="logo">RAAZ<span style="color:var(--accent)">.</span></div>
+        <a href="https://wa.me/919599479247" class="wa-btn"><i class="fab fa-whatsapp"></i> Call</a>
+    </div>
+
+    <!-- MAIN SCREENS -->
+    <div class="main">
+        
+        <!-- 1. HOME -->
+        <div id="scr-home" class="screen active">
+            <h2 style="color:white; font-size:18px;">Welcome</h2>
+            <div class="card" style="display:flex; align-items:center; gap:15px;">
+                <div style="width:50px; height:50px; background:#222; border-radius:50%; overflow:hidden;">
+                    <img id="home-doc-img" src="https://cdn-icons-png.flaticon.com/512/377/377429.png" style="width:100%; height:100%; object-fit:cover;">
+                </div>
+                <div>
+                    <div style="font-weight:bold; font-size:16px;" id="home-doc-name">Dr. Consultant</div>
+                    <div style="font-size:12px; color:var(--accent);" id="home-doc-deg">Sexologist & Expert</div>
+                </div>
+            </div>
+
+            <h3 style="color:white; font-size:16px; margin-top:20px;">Success Stories</h3>
+            <div class="card">
+                <b>Amit's Recovery</b>
+                <p style="font-size:12px; color:#aaa;">"2 weeks mein fark dikha..."</p>
+                <div style="color:var(--accent); font-size:12px; margin-top:5px;"> Watch Video</div>
+            </div>
+        </div>
+
+        <!-- 2. TRACKER -->
+        <div id="scr-plan" class="screen">
+            <h2 style="color:white; font-size:18px;">Daily Tracker</h2>
+            <div class="card" style="text-align:center; padding:30px;">
+                <p style="color:var(--accent);" id="date-display">Today</p>
+                <h1 style="font-size:32px; margin:10px 0;">Streak: 0</h1>
+                <p style="color:#aaa;">Keep going!</p>
+            </div>
+        </div>
+
+        <!-- 3. STORE -->
+        <div id="scr-store" class="screen">
+            <h2 style="color:white; font-size:18px;">Store</h2>
+            <div id="store-list">
+                <div style="color:#aaa; text-align:center;">Loading products...</div>
+            </div>
+        </div>
+
+        <!-- 4. CHAT -->
+        <div id="scr-chat" class="screen">
+            <div class="chat-header-card">
+                <div style="width:40px; height:40px; background:#222; border-radius:50%; overflow:hidden;">
+                    <img id="chat-doc-img" src="https://cdn-icons-png.flaticon.com/512/377/377429.png" style="width:100%; height:100%; object-fit:cover;">
+                </div>
+                <div>
+                    <b id="chat-doc-name">Dr. Consultant</b><br>
+                    <small style="color:var(--accent);"> Online</small>
+                </div>
+            </div>
+            <div id="chat-list"></div>
+            <div class="chat-input">
+                <input id="msg-in" placeholder="Type here..." style="flex:1; padding:12px; border-radius:30px; border:none; outline:none;">
+                <button onclick="send()" style="width:45px; height:45px; border-radius:50%; border:none; background:var(--accent); font-weight:bold;"></button>
+            </div>
+        </div>
+
+        <!-- 5. BOOKING -->
+        <div id="scr-book" class="screen">
+            <h2 style="color:white; font-size:18px;">Book Appointment</h2>
+            <div class="card">
+                <h3 style="margin-top:0;">Available Slots</h3>
+                <div id="time-list" style="display:flex; flex-wrap:wrap; gap:10px;">
+                    <div style="color:#aaa;">Loading slots...</div>
+                </div>
+            </div>
+            <button class="btn-main" onclick="book()">Confirm Booking</button>
+        </div>
+    </div>
+
+    <!-- NAV BAR -->
+    <div class="nav">
+        <div class="icon active" onclick="go('scr-home', this)"><i class="fas fa-home"></i></div>
+        <div class="icon" onclick="go('scr-store', this)"><i class="fas fa-shopping-bag"></i></div>
+        <div class="fab-center" onclick="go('scr-chat', null)"><i class="fas fa-comment-medical"></i></div>
+        <div class="icon" onclick="go('scr-book', this)"><i class="fas fa-calendar-alt"></i></div>
+        <div class="icon" onclick="go('scr-plan', this)"><i class="fas fa-tasks"></i></div>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="login-modal">
+        <h1 style="color:white; text-align:center; font-size:32px;">zain</h1>
+        <p style="color:#aaa; text-align:center;">Secure & Private</p>
+        <input id="u-name" class="inp-field" placeholder="Enter Anonymous Name">
+        <button class="btn-main" onclick="login()">Start Journey</button>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+<script>
+    const cfg = { apiKey: "AIzaSyDnKrUy92TqQLr6y1gW-40TYz8wi6UmYX4",
+    authDomain: "raaz-d7f78.firebaseapp.com",
+    databaseURL: "https://raaz-d7f78-default-rtdb.firebaseio.com",
+    projectId: "raaz-d7f78",
+    storageBucket: "raaz-d7f78.firebasestorage.app",
+    messagingSenderId: "532169784659",
+    appId: "1:532169784659:web:6b52e52d7fbdbfd313b5a6"
+  };
+
+    firebase.initializeApp(cfg); const db=firebase.database();
+    let user={id:null, name:null};
+
+    function login(){
+        const n=document.getElementById('u-name').value;
+        if(!n) return;
+        user.name=n; user.id='u_'+Date.now();
+        db.ref('users/'+user.id).set({name:n, last:Date.now()});
+        document.getElementById('login-modal').style.display='none';
+        init();
+    }
+
+    function init(){
+        document.getElementById('date-display').innerText = new Date().toDateString();
+        
+        // Load Doctor Details
+        db.ref('settings/doctor').on('value', s=>{
+            const d = s.val() || {name:'Dr. Consultant', deg:'Specialist', img:''};
+            document.getElementById('home-doc-name').innerText = d.name;
+            document.getElementById('home-doc-deg').innerText = d.deg;
+            document.getElementById('chat-doc-name').innerText = d.name;
+            if(d.img) {
+                document.getElementById('home-doc-img').src = d.img;
+                document.getElementById('chat-doc-img').src = d.img;
+            }
+        });
+
+        // Store
+        db.ref('products').on('value', s=>{
+            const l=document.getElementById('store-list'); l.innerHTML="";
+            const d=s.val();
+            if(!d) { l.innerHTML="<p style='color:#aaa; text-align:center'>No products</p>"; return; }
+            Object.keys(d).forEach(k=>{
+                const p=d[k];
+                const img=p.img || 'https://via.placeholder.com/300x150';
+                l.innerHTML += `
+                <div class="prod-card">
+                    <img src="${img}" class="prod-img">
+                    <div class="prod-info">
+                        <b style="color:white;">${p.name}</b>
+                        <p style="font-size:12px; color:#aaa; margin:5px 0;">${p.desc||''}</p>
+                        <div class="price-row">
+                            <span style="color:var(--accent);">${p.price}</span>
+                            <button class="buy-sm" ${!p.inStock?'disabled style="background:#555"':''} onclick="order('${p.name}', '${p.price}')">
+                                ${p.inStock?'Buy':'Out'}
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+            });
+        });
+
+        // Slots
+        db.ref('settings/slots').on('value', s=>{
+            const l=document.getElementById('time-list'); l.innerHTML="";
+            const d=s.val();
+            if(d) Object.values(d).forEach(t=> l.innerHTML+=`<div style="background:#1a3c42; padding:10px; border-radius:5px; font-size:12px; cursor:pointer;" onclick="this.style.background='var(--accent)'; this.style.color='black'">${t}</div>`);
+        });
+
+        // Chat
+        db.ref('chats/'+user.id).on('child_added', s=>{
+            const m=s.val();
+            document.getElementById('chat-list').innerHTML+=`<div class="msg ${m.sender==='user'?'msg-me':'msg-doc'}">${m.text}</div>`;
+            document.getElementById('chat-list').scrollTop = document.getElementById('chat-list').scrollHeight;
+        });
+    }
+
+    function send(){ const t=document.getElementById('msg-in').value; if(t){ db.ref('chats/'+user.id).push({sender:'user', text:t}); document.getElementById('msg-in').value=""; } }
+    function go(id,el){ 
+        document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); 
+        if(el){ document.querySelectorAll('.icon').forEach(i=>i.classList.remove('active')); el.classList.add('active'); } 
+    }
+    function order(n,p){ if(confirm("Order "+n+"?")) db.ref('orders').push({item:n, price:p, user:user.name, status:'Pending'}); }
+    function book(){ alert("Booking Request Sent!"); db.ref('chats/'+user.id).push({sender:'user', text:"Requesting Appointment"}); go('scr-chat',null); }
+</script>
+</body>
+</html>
